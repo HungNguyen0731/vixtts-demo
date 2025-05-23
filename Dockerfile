@@ -30,12 +30,12 @@ COPY . .
 # Expose port cho Gradio (mặc định là 7860)
 EXPOSE 7860
 
-# Disable health check cho đơn giản
-
+# Health check để kiểm tra ứng dụng Gradio
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:7860/ || exit 1
 
 # Chạy ứng dụng Gradio
 # Thay đổi 'app.py' thành tên file chính của bạn
 CMD ["python", "app.py"]
-
 # Nếu bạn muốn chạy trên port 8000 và cho phép external access:
 # CMD ["python", "-c", "import app; app.demo.launch(server_name='0.0.0.0', server_port=8000)"]
