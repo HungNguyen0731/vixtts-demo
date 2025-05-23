@@ -1,8 +1,7 @@
-# Multi-stage build để tối ưu kích thước image
-# Stage 1: Build stage
-FROM python:3.11-slim as builder
+# Dockerfile đơn giản cho ứng dụng Gradio
+FROM python:3.11-slim
 
-# Cài đặt system dependencies cho build
+# Cài đặt system dependencies cần thiết
 RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
@@ -15,47 +14,28 @@ RUN apt-get update && apt-get install -y \
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
-# Tạo virtual environment
-RUN python -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
+# Thiết lập working directory
+WORKDIR /app
 
-# Upgrade pip và các tools
+# Upgrade pip
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
 # Copy requirements và cài đặt dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Stage 2: Runtime stage
-FROM python:3.11-slim as runtime
-
-# Cài đặt runtime dependencies tối thiểu
-RUN apt-get update && apt-get install -y \
-    curl \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean
-
-# Copy virtual environment từ build stage
-COPY --from=builder /opt/venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-
-# Thiết lập working directory
-WORKDIR /app
-
-# Copy application code
+# Copy toàn bộ source code
 COPY . .
 
-# Tạo user non-root
-RUN groupadd -r appuser && useradd -r -g appuser appuser \
-    && chown -R appuser:appuser /app
-USER appuser
+# Expose port cho Gradio (mặc định là 7860)
+EXPOSE 7860
 
-# Expose port
-EXPOSE 8000
+# Disable health check cho đơn giản
+HEALTHCHECK NONE
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8000/ || exit 1
-
-# Command để chạy ứng dụng
+# Chạy ứng dụng Gradio
+# Thay đổi 'app.py' thành tên file chính của bạn
 CMD ["python", "app.py"]
+
+# Nếu bạn muốn chạy trên port 8000 và cho phép external access:
+# CMD ["python", "-c", "import app; app.demo.launch(server_name='0.0.0.0', server_port=8000)"]
