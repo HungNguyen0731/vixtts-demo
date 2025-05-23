@@ -31,7 +31,7 @@ COPY . .
 EXPOSE 7860
 
 # Disable health check cho đơn giản
-HEALTHCHECK NONE
+
 
 # Chạy ứng dụng Gradio
 # Thay đổi 'app.py' thành tên file chính của bạn
