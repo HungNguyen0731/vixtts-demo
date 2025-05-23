@@ -1,15 +1,15 @@
 # Dockerfile for viXTTS Demo
 FROM python:3.10-slim
 
-# Install system dependencies, including python3.10-dev and python3.10-venv
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
     pkg-config \
     libssl-dev \
     git \
-    python3.10-dev \
-    python3.10-venv \
+    python3-dev \
+    python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Rust toolchain (required for some dependencies)
