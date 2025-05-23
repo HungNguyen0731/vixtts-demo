@@ -36,6 +36,6 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
 
 # Chạy ứng dụng Gradio
 # Thay đổi 'app.py' thành tên file chính của bạn
-CMD ["python", "app.py"]
+CMD ["python", "main.py"]
 # Nếu bạn muốn chạy trên port 8000 và cho phép external access:
 # CMD ["python", "-c", "import app; app.demo.launch(server_name='0.0.0.0', server_port=8000)"]
